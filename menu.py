@@ -27,5 +27,11 @@ class Menu:
         self.application_date = input("Please enter the application date(DD/MM/YYYY): ")
         self.application_stage = input("Please enter the application stage: ").title()
 
+    def application_search(self):
+        self.company_name = input("Enter the company name to search for: ").title()
+
+    def update_application_status(self):
+        self.company_name = (input("Enter the company name whose application "
+                                   "status you wish to update: ").title())
 
 

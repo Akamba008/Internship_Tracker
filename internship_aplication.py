@@ -1,6 +1,7 @@
 class InternshipApplication:
 
-    def __init__(self, company_name, role, industry, company_location, application_date, application_stage):
+    def __init__(self, company_name, role, industry, company_location,
+                 application_date, application_stage):
         self.company_name = company_name
         self.role = role
         self.industry = industry
