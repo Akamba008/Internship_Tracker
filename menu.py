@@ -34,4 +34,7 @@ class Menu:
         self.company_name = (input("Enter the company name whose application "
                                    "status you wish to update: ").title())
 
+    def delete_application(self):
+        self.company_name = (input("Enter the company name whose application "
+                                   "you wish to delete: ").title())
 

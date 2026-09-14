@@ -45,4 +45,9 @@ class ApplicationManager:
                           f"\nEnter the new application status: ")
         application_id.application_stage = new_status
 
+    def delete_application(self, application_id):
+        print(f"The application for {application_id.company_name} has been permanently deleted.")
+        self.application_list.remove(application_id)
+
+
 

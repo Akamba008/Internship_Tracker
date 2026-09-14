@@ -24,6 +24,8 @@ while running:
         application_manager.search_applications(application_manager.update_application_status,
                                                 menu.company_name)
     elif menu.option == 5:
-        pass
+        menu.delete_application()
+        application_manager.search_applications(application_manager.delete_application,
+                                                menu.company_name)
     elif menu.option == 6:
         running = False
