@@ -1,8 +1,5 @@
 import csv
-
 from tabulate import tabulate
-
-from internship_aplication import InternshipApplication
 import pandas
 
 column_headers = ["Company Name", "Role", "Industry", "Company Location",
@@ -21,15 +18,7 @@ class ApplicationManager:
 
     def add_application(self, company_name, role, industry, company_location,
                         application_date, application_stage):
-        # internship_application = InternshipApplication(
-        #     company_name,
-        #     role,
-        #     industry,
-        #     company_location,
-        #     application_date,
-        #     application_stage
-        # )
-        # self.application_list.append(internship_application)
+
         self.application_list = [company_name, role, industry, company_location,
                         application_date, application_stage]
         with open("applications.csv", mode="a", ) as application_csv:
