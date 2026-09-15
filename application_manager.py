@@ -1,49 +1,73 @@
+import csv
+
+from tabulate import tabulate
+
 from internship_aplication import InternshipApplication
+import pandas
+
+column_headers = ["Company Name", "Role", "Industry", "Company Location",
+                  "Application Date", "Application Stage"]
 
 class ApplicationManager:
 
     def __init__(self):
         self.application_list = []
+        with open("applications.csv", mode="w",) as application_csv:
+            writer = csv.writer(application_csv)
+            writer.writerow(column_headers)
+        self.reader = pandas.read_csv("applications.csv")
+        self.search_column = self.reader["Company Name"]
+
 
     def add_application(self, company_name, role, industry, company_location,
                         application_date, application_stage):
-        internship_application = InternshipApplication(
-            company_name,
-            role,
-            industry,
-            company_location,
-            application_date,
-            application_stage
-        )
-        self.application_list.append(internship_application)
+        # internship_application = InternshipApplication(
+        #     company_name,
+        #     role,
+        #     industry,
+        #     company_location,
+        #     application_date,
+        #     application_stage
+        # )
+        # self.application_list.append(internship_application)
+        self.application_list = [company_name, role, industry, company_location,
+                        application_date, application_stage]
+        with open("applications.csv", mode="a", ) as application_csv:
+            writer = csv.writer(application_csv)
+            writer.writerow(self.application_list)
+        self.reader = pandas.read_csv("applications.csv")
+
 
     def view_applications(self):
-        for application in self.application_list:
-            print(application.company_name,
-                  application.role,
-                  application.industry,
-                  application.company_location,
-                  application.application_date,
-                  application.application_stage)
+        if self.reader.empty:
+            print("No applications found.")
+        else:
+            print(tabulate(self.reader, headers=column_headers, tablefmt="fancy_grid",
+                           showindex=False))
+
 
     def search_applications(self, function, company_name):
-        for application in self.application_list:
-            if application.company_name == company_name:
-                function(application)
+        self.search_column = self.reader["Company Name"]
+        for row in self.search_column:
+            if row == company_name:
+                function(company_name)
                 return
         print(f"No application found for {company_name}.")
 
-    @staticmethod
-    def view_application(application_id):
-        print(f"Company Name: {application_id.company_name}\nRole: {application_id.role}\n"
-              f"Industry: {application_id.industry}\nLocation: {application_id.company_location}\n"
-              f"Date: {application_id.application_date}\nStage: {application_id.application_stage}")
+
+
+    def view_application(self, company_name):
+        company_row = self.reader[self.search_column == company_name]
+        print(tabulate(company_row, headers=column_headers, tablefmt="fancy_grid",
+                       showindex=False))
+
 
     @staticmethod
     def update_application_status(application_id):
         new_status =input(f"This was the former status of application: {application_id.application_stage}"
                           f"\nEnter the new application status: ")
         application_id.application_stage = new_status
+
 
     def delete_application(self, application_id):
         print(f"The application for {application_id.company_name} has been permanently deleted.")

@@ -13,19 +13,28 @@ while running:
         application_manager.add_application(menu.company_name, menu.role, menu.industry,
                                             menu.company_location, menu.application_date,
                                             menu.application_stage)
+
     elif menu.option == 2:
         application_manager.view_applications()
+
+
     elif menu.option == 3:
-        menu.application_search()
-        application_manager.search_applications(application_manager.view_application,
-                                                menu.company_name)
+        if menu.is_file_empty(menu.application_search):
+            application_manager.search_applications(application_manager.view_application,
+                                                    menu.company_name)
+
+
     elif menu.option == 4:
-        menu.update_application_status()
-        application_manager.search_applications(application_manager.update_application_status,
+        if menu.is_file_empty(menu.update_application_status):
+            application_manager.search_applications(application_manager.update_application_status,
                                                 menu.company_name)
+
+
     elif menu.option == 5:
         menu.delete_application()
         application_manager.search_applications(application_manager.delete_application,
                                                 menu.company_name)
+
+
     elif menu.option == 6:
         running = False

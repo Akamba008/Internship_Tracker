@@ -1,3 +1,5 @@
+import pandas
+
 class Menu:
 
     def __init__(self):
@@ -26,6 +28,16 @@ class Menu:
         self.company_location = input("Please enter the company location: ").title()
         self.application_date = input("Please enter the application date(DD/MM/YYYY): ")
         self.application_stage = input("Please enter the application stage: ").title()
+
+    @staticmethod
+    def is_file_empty(function):
+        reader = pandas.read_csv("applications.csv")
+        if reader.empty:
+            print("No applications yet. Add some!")
+            return False
+        else:
+            function()
+            return True
 
     def application_search(self):
         self.company_name = input("Enter the company name to search for: ").title()
