@@ -15,7 +15,7 @@ class Menu:
     def list_options(self):
         print("1. Enter application information"
               "\n2. View all applications"
-              "\n3. Search for an application"
+              "\n3. Search applications by company"
               "\n4. Update an application"
               "\n5. Delete an application"
               "\n6. Exit")
@@ -34,13 +34,13 @@ class Menu:
         reader = pandas.read_csv("applications.csv")
         if reader.empty:
             print("No applications yet. Add some!")
-            return False
+            return True
         else:
             function()
-            return True
+            return False
 
     def application_search(self):
-        self.company_name = input("Enter the company name to search for: ").title()
+        self.company_name = input("Enter the company name to search: ").title()
 
     def update_application_status(self):
         self.company_name = (input("Enter the company name whose application "

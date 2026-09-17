@@ -19,13 +19,13 @@ while running:
 
 
     elif menu.option == 3:
-        if menu.is_file_empty(menu.application_search):
+        if not menu.is_file_empty(menu.application_search):
             application_manager.search_applications(application_manager.view_application,
                                                     menu.company_name)
 
 
     elif menu.option == 4:
-        if menu.is_file_empty(menu.update_application_status):
+        if not menu.is_file_empty(menu.update_application_status):
             application_manager.search_applications(application_manager.update_application_status,
                                                 menu.company_name)
 

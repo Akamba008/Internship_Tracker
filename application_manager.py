@@ -2,29 +2,31 @@ import csv
 from tabulate import tabulate
 import pandas
 
-column_headers = ["Company Name", "Role", "Industry", "Company Location",
+column_headers = ["Application ID","Company Name", "Role", "Industry", "Company Location",
                   "Application Date", "Application Stage"]
 
 class ApplicationManager:
 
     def __init__(self):
         self.application_list = []
+        self.application_count = 0000
         with open("applications.csv", mode="w",) as application_csv:
             writer = csv.writer(application_csv)
             writer.writerow(column_headers)
-        self.reader = pandas.read_csv("applications.csv")
+        self.reader = pandas.read_csv("applications.csv", dtype={"Application ID": str})
         self.search_column = self.reader["Company Name"]
 
 
     def add_application(self, company_name, role, industry, company_location,
                         application_date, application_stage):
-
-        self.application_list = [company_name, role, industry, company_location,
-                        application_date, application_stage]
+        self.application_count += 1
+        self.application_list = [f"{self.application_count:04d}" , company_name,
+                                 role, industry, company_location, application_date,
+                                 application_stage]
         with open("applications.csv", mode="a", ) as application_csv:
             writer = csv.writer(application_csv)
             writer.writerow(self.application_list)
-        self.reader = pandas.read_csv("applications.csv")
+        self.reader = pandas.read_csv("applications.csv", dtype={"Application ID": str})
 
 
     def view_applications(self):
@@ -51,15 +53,35 @@ class ApplicationManager:
                        showindex=False))
 
 
-    @staticmethod
-    def update_application_status(application_id):
-        new_status =input(f"This was the former status of application: {application_id.application_stage}"
-                          f"\nEnter the new application status: ")
-        application_id.application_stage = new_status
+    def update_application_status(self, company_name):
+        self.view_application(company_name)
+        company_row = self.reader[self.search_column == company_name]
+        if len(company_row) <= 1:
+            company_index = self.get_index(company_name)
+        else:
+            app_id = input("Enter the Application ID you want to update: ").zfill(4)
+            company_index = self.get_id_index(app_id)
+
+        new_status = input("Enter the new stage of your application: ").title()
+        self.reader.at[company_index, "Application Stage"] = new_status
+        self.reader.to_csv("applications.csv", index=False)
+
+
+    def get_index(self, company_name):
+        column_index = self.reader.set_index([column_headers[1]])
+        company_index = column_index.index.get_loc(company_name)
+        return company_index
+
+
+    def get_id_index(self, app_id):
+        column_index = self.reader.set_index(column_headers[0])
+        company_index = column_index.index.get_loc(app_id)
+        return company_index
 
 
     def delete_application(self, application_id):
-        print(f"The application for {application_id.company_name} has been permanently deleted.")
+        print(f"The application for {application_id.company_name} has been "
+              f"permanently deleted.")
         self.application_list.remove(application_id)
 
 
