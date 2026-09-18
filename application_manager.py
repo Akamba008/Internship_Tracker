@@ -1,4 +1,5 @@
 import csv
+from pathlib import Path
 from tabulate import tabulate
 import pandas
 
@@ -8,12 +9,20 @@ column_headers = ["Application ID","Company Name", "Role", "Industry", "Company 
 class ApplicationManager:
 
     def __init__(self):
+        file = Path("applications.csv")
+        self.application_count = 0
         self.application_list = []
-        self.application_count = 0000
-        with open("applications.csv", mode="w",) as application_csv:
-            writer = csv.writer(application_csv)
-            writer.writerow(column_headers)
-        self.reader = pandas.read_csv("applications.csv", dtype={"Application ID": str})
+        if file.is_file():
+            self.reader = pandas.read_csv("applications.csv",
+                                          dtype={"Application ID": str})
+            if not self.reader.empty:
+                self.application_count = int(self.reader["Application ID"].max())
+        else:
+            with open("applications.csv", mode="w",) as application_csv:
+                writer = csv.writer(application_csv)
+                writer.writerow(column_headers)
+            self.reader = pandas.read_csv("applications.csv",
+                                              dtype={"Application ID": str})
         self.search_column = self.reader["Company Name"]
 
 
@@ -44,7 +53,6 @@ class ApplicationManager:
                 function(company_name)
                 return
         print(f"No application found for {company_name}.")
-
 
 
     def view_application(self, company_name):
