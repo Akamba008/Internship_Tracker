@@ -14,7 +14,7 @@ class ApplicationManager:
         self.application_list = []
         if file.is_file():
             self.reader = pandas.read_csv("applications.csv",
-                                          dtype={"Application ID": str})
+                                          dtype={"Application ID": str, "Application Stage": str})
             if not self.reader.empty:
                 self.application_count = int(self.reader["Application ID"].max())
         else:
@@ -22,7 +22,7 @@ class ApplicationManager:
                 writer = csv.writer(application_csv)
                 writer.writerow(column_headers)
             self.reader = pandas.read_csv("applications.csv",
-                                              dtype={"Application ID": str})
+                                              dtype={"Application ID": str, "Application Stage": str})
         self.search_column = self.reader["Company Name"]
 
 
@@ -35,7 +35,8 @@ class ApplicationManager:
         with open("applications.csv", mode="a", ) as application_csv:
             writer = csv.writer(application_csv)
             writer.writerow(self.application_list)
-        self.reader = pandas.read_csv("applications.csv", dtype={"Application ID": str})
+        self.reader = pandas.read_csv("applications.csv", dtype={"Application ID": str,
+                                                                 "Application Stage": str})
 
 
     def view_applications(self):
@@ -71,26 +72,36 @@ class ApplicationManager:
             company_index = self.get_id_index(app_id)
 
         new_status = input("Enter the new stage of your application: ").title()
-        self.reader.at[company_index, "Application Stage"] = new_status
+        self.reader.at[company_index[0], column_headers[6]] = new_status
         self.reader.to_csv("applications.csv", index=False)
+        print(f"Application status updated to {new_status}.")
 
 
     def get_index(self, company_name):
-        column_index = self.reader.set_index([column_headers[1]])
-        company_index = column_index.index.get_loc(company_name)
-        return company_index
+        self.search_column = self.reader[column_headers[1]]
+        company_row = self.reader[self.search_column == company_name]
+        company_row_index = company_row.index
+        return company_row_index
 
 
     def get_id_index(self, app_id):
-        column_index = self.reader.set_index(column_headers[0])
-        company_index = column_index.index.get_loc(app_id)
-        return company_index
+        self.search_column = self.reader[column_headers[0]]
+        company_row = self.reader[self.search_column == app_id]
+        company_row_index = company_row.index
+        return company_row_index
 
 
-    def delete_application(self, application_id):
-        print(f"The application for {application_id.company_name} has been "
-              f"permanently deleted.")
-        self.application_list.remove(application_id)
+    def delete_application(self, company_name):
+        self.view_application(company_name)
+        company_row = self.reader[self.search_column == company_name]
+        if len(company_row) <= 1:
+            company_index = self.get_index(company_name)
+        else:
+            app_id = input("Enter the Application ID you want to delete: ").zfill(4)
+            company_index = self.get_id_index(app_id)
+        self.reader.drop(company_index[0], inplace=True)
+        self.reader.to_csv("applications.csv", index=False)
+        print(f"The above application has been permanently deleted.")
 
 
 

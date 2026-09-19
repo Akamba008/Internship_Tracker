@@ -31,9 +31,9 @@ while running:
 
 
     elif menu.option == 5:
-        menu.delete_application()
-        application_manager.search_applications(application_manager.delete_application,
-                                                menu.company_name)
+        if not menu.is_file_empty(menu.delete_application):
+            application_manager.search_applications(application_manager.delete_application,
+                                                    menu.company_name)
 
 
     elif menu.option == 6:
