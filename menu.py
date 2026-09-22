@@ -19,7 +19,16 @@ class Menu:
               "\n4. Update an application"
               "\n5. Delete an application"
               "\n6. Exit")
-        self.option = int(input("Please select an option: "))
+        while True:
+            try:
+                self.option = int(input("Please select an option: "))
+            except ValueError:
+                print("Please select a correct option\n\n")
+            else:
+                if self.option not in self.options:
+                    print("Please select a correct option\n\n")
+                else:
+                    break
 
     def add_application_option(self):
         self.company_name = input("Please enter the company name: ").title()

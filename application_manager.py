@@ -55,6 +55,13 @@ class ApplicationManager:
                 return
         print(f"No application found for {company_name}.")
 
+    def search_ids(self, app_id, company_row):
+        self.search_column = company_row[column_headers[0]]
+        for row in self.search_column:
+            if row == app_id:
+                return True
+        return False
+
 
     def view_application(self, company_name):
         company_row = self.reader[self.search_column == company_name]
@@ -68,9 +75,13 @@ class ApplicationManager:
         if len(company_row) <= 1:
             company_index = self.get_index(company_name)
         else:
-            app_id = input("Enter the Application ID you want to update: ").zfill(4)
-            company_index = self.get_id_index(app_id)
-
+            while True:
+                app_id = input("Enter the Application ID you want to update: ").zfill(4)
+                if not self.search_ids(app_id, company_row):
+                    print("Invalid Application ID.")
+                else:
+                    company_index = self.get_id_index(app_id)
+                    break
         new_status = input("Enter the new stage of your application: ").title()
         self.reader.at[company_index[0], column_headers[6]] = new_status
         self.reader.to_csv("applications.csv", index=False)
@@ -97,8 +108,13 @@ class ApplicationManager:
         if len(company_row) <= 1:
             company_index = self.get_index(company_name)
         else:
-            app_id = input("Enter the Application ID you want to delete: ").zfill(4)
-            company_index = self.get_id_index(app_id)
+            while True:
+                app_id = input("Enter the Application ID you want to delete: ").zfill(4)
+                if not self.search_ids(app_id, company_row):
+                    print("Invalid Application ID.")
+                else:
+                    company_index = self.get_id_index(app_id)
+                    break
         self.reader.drop(company_index[0], inplace=True)
         self.reader.to_csv("applications.csv", index=False)
         print(f"The above application has been permanently deleted.")

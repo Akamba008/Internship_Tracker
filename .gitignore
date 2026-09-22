@@ -27,3 +27,4 @@ htmlcov/
 build/
 dist/
 *.egg-info/
+applications.csv
