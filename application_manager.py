@@ -3,8 +3,10 @@ from pathlib import Path
 from tabulate import tabulate
 import pandas
 
-column_headers = ["Application ID","Company Name", "Role", "Industry", "Company Location",
-                  "Application Date", "Application Stage"]
+column_headers = [
+    "Application ID","Company Name", "Role", "Industry",
+    "Company Location", "Application Date", "Application Stage"
+]
 
 class ApplicationManager:
 
@@ -47,7 +49,13 @@ class ApplicationManager:
                            showindex=False))
 
 
-    def search_applications(self, function, company_name):
+    def view_application(self, company_name):
+        company_row = self.reader[self.search_column == company_name]
+        print(tabulate(company_row, headers=column_headers, tablefmt="fancy_grid",
+                       showindex=False))
+
+
+    def search_company(self, function, company_name):
         self.search_column = self.reader["Company Name"]
         for row in self.search_column:
             if row == company_name:
@@ -55,7 +63,8 @@ class ApplicationManager:
                 return
         print(f"No application found for {company_name}.")
 
-    def search_ids(self, app_id, company_row):
+
+    def is_valid_application_id(self, app_id, company_row):
         self.search_column = company_row[column_headers[0]]
         for row in self.search_column:
             if row == app_id:
@@ -63,61 +72,41 @@ class ApplicationManager:
         return False
 
 
-    def view_application(self, company_name):
+    def select_application(self, company_name):
         company_row = self.reader[self.search_column == company_name]
-        print(tabulate(company_row, headers=column_headers, tablefmt="fancy_grid",
-                       showindex=False))
+        if len(company_row) <= 1:
+            company_index = self.get_index(company_name, column_headers[1])
+            return company_index
+        else:
+            while True:
+                app_id = input("Enter the Application ID: ").zfill(4)
+                if not self.is_valid_application_id(app_id, company_row):
+                    print("Invalid Application ID.")
+                else:
+                    company_index = self.get_index(app_id, column_headers[0])
+                    return company_index
 
 
     def update_application_status(self, company_name):
         self.view_application(company_name)
-        company_row = self.reader[self.search_column == company_name]
-        if len(company_row) <= 1:
-            company_index = self.get_index(company_name)
-        else:
-            while True:
-                app_id = input("Enter the Application ID you want to update: ").zfill(4)
-                if not self.search_ids(app_id, company_row):
-                    print("Invalid Application ID.")
-                else:
-                    company_index = self.get_id_index(app_id)
-                    break
+        app_index = self.select_application(company_name)
         new_status = input("Enter the new stage of your application: ").title()
-        self.reader.at[company_index[0], column_headers[6]] = new_status
+        self.reader.at[app_index[0], column_headers[6]] = new_status
         self.reader.to_csv("applications.csv", index=False)
         print(f"Application status updated to {new_status}.")
 
 
-    def get_index(self, company_name):
-        self.search_column = self.reader[column_headers[1]]
-        company_row = self.reader[self.search_column == company_name]
-        company_row_index = company_row.index
-        return company_row_index
-
-
-    def get_id_index(self, app_id):
-        self.search_column = self.reader[column_headers[0]]
-        company_row = self.reader[self.search_column == app_id]
-        company_row_index = company_row.index
-        return company_row_index
-
-
     def delete_application(self, company_name):
         self.view_application(company_name)
-        company_row = self.reader[self.search_column == company_name]
-        if len(company_row) <= 1:
-            company_index = self.get_index(company_name)
-        else:
-            while True:
-                app_id = input("Enter the Application ID you want to delete: ").zfill(4)
-                if not self.search_ids(app_id, company_row):
-                    print("Invalid Application ID.")
-                else:
-                    company_index = self.get_id_index(app_id)
-                    break
-        self.reader.drop(company_index[0], inplace=True)
+        app_index = self.select_application(company_name)
+        self.reader.drop(app_index[0], inplace=True)
         self.reader.to_csv("applications.csv", index=False)
         print(f"The above application has been permanently deleted.")
 
 
+    def get_index(self, value, column):
+        self.search_column = self.reader[column]
+        company_row = self.reader[self.search_column == value]
+        company_row_index = company_row.index
+        return company_row_index
 

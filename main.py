@@ -20,20 +20,20 @@ while running:
 
     elif menu.option == 3:
         if not menu.is_file_empty(menu.application_search):
-            application_manager.search_applications(application_manager.view_application,
-                                                    menu.company_name)
+            application_manager.search_company(application_manager.view_application,
+                                               menu.company_name)
 
 
     elif menu.option == 4:
         if not menu.is_file_empty(menu.update_application_status):
-            application_manager.search_applications(application_manager.update_application_status,
-                                                menu.company_name)
+            application_manager.search_company(application_manager.update_application_status,
+                                               menu.company_name)
 
 
     elif menu.option == 5:
         if not menu.is_file_empty(menu.delete_application):
-            application_manager.search_applications(application_manager.delete_application,
-                                                    menu.company_name)
+            application_manager.search_company(application_manager.delete_application,
+                                               menu.company_name)
 
 
     elif menu.option == 6:
