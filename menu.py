@@ -1,6 +1,8 @@
 import pandas
 
+
 class Menu:
+    """Handle menu display and user input for the Internship Tracker."""
 
     def __init__(self):
         self.option = ""
@@ -12,7 +14,8 @@ class Menu:
         self.application_date = ""
         self.application_stage = ""
 
-    def list_options(self):
+    def display_menu(self):
+        """Display the main menu and validate the user's selected option."""
         print("1. Enter application information"
               "\n2. View all applications"
               "\n3. Search applications by company"
@@ -23,23 +26,25 @@ class Menu:
             try:
                 self.option = int(input("Please select an option: "))
             except ValueError:
-                print("Please select a correct option\n\n")
+                print("Please select a valid option\n")
             else:
                 if self.option not in self.options:
                     print("Please select a correct option\n\n")
                 else:
                     break
 
-    def add_application_option(self):
-        self.company_name = input("Please enter the company name: ").title()
-        self.role = input("Please enter the role: ").title()
-        self.industry = input("Please enter the industry: ").title()
-        self.company_location = input("Please enter the company location: ").title()
-        self.application_date = input("Please enter the application date(DD/MM/YYYY): ")
-        self.application_stage = input("Please enter the application stage: ").title()
+    def get_application_details(self):
+        """Collect application details from the user."""
+        self.company_name = input("Please enter the company name: ").strip().title()
+        self.role = input("Please enter the role: ").strip().title()
+        self.industry = input("Please enter the industry: ").strip().title()
+        self.company_location = input("Please enter the company location: ").strip().title()
+        self.application_date = input("Please enter the application date(DD/MM/YYYY): ").strip()
+        self.application_stage = input("Please enter the application stage: ").strip().title()
 
     @staticmethod
     def is_file_empty(function):
+        """Check for stored applications before performing the requested operation."""
         reader = pandas.read_csv("applications.csv")
         if reader.empty:
             print("No applications yet. Add some!")
@@ -48,14 +53,17 @@ class Menu:
             function()
             return False
 
-    def application_search(self):
-        self.company_name = input("Enter the company name to search: ").title()
+    def get_company_to_search(self):
+        """Collect the company name to search for."""
+        self.company_name = input("Enter the company name to search: ").strip().title()
 
-    def update_application_status(self):
+    def get_company_to_update(self):
+        """Collect the company name of the application to update."""
         self.company_name = (input("Enter the company name whose application "
-                                   "status you wish to update: ").title())
+                                   "status you wish to update: ").strip().title())
 
-    def delete_application(self):
+    def get_company_to_delete(self):
+        """Collect the company name of the application to delete."""
         self.company_name = (input("Enter the company name whose application "
-                                   "you wish to delete: ").title())
+                                   "you wish to delete: ").strip().title())
 
